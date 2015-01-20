@@ -98,7 +98,7 @@
 
 		var estadoLed;
 		var timer = $interval(function(){
-			$http.get('http://192.168.1.110/').success(function(data){
+			$http.get('http://192.168.1.110/?').success(function(data){
 				$scope.temp = data.temp;
 				$scope.umid = data.umid;
 				estadoLed = data.led;
@@ -108,16 +108,21 @@
 					$scope.ledEstado = "Ligar Led";
 				}
 			});
+			console.log("teste");
 		}, 500);
 
 		$scope.led = function(){
 			if(estadoLed == 1){
-				$http.get('http://192.168.1.110/?ledoff');
-				$scope.ledEstado = "Ligar Led";
+				$http.get('http://192.168.1.110/?acao=off').success(function(){
+					$scope.ledEstado = "Ligar Led";
+				});				
 			}else{
-				$http.get('http://192.168.1.110/?ledon');
-				$scope.ledEstado = "Desligar Led";
+				$http.get('http://192.168.1.110/?acao=oon').success(function(){
+					$scope.ledEstado = "Desligar Led";
+				});								
 			}
+
+			console.log("led execuado");
 		}
 
 	});
