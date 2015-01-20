@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<title>Temperatura & Umidade</title>
+</head>
+<body ng-app="app">
+
+	<div id="center" ng-controller="appController">
+		<ul>
+			<li>Temperatura: {{temp}}ºC</li>
+			<li>Umidade: {{umid}}%</li>
+			<li><a ng-click="led()" class="button">{{ledEstado}}</a>
+			</li>
+		</ul>
+	</div>
+
+
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300' rel='stylesheet' type='text/css'>
+	<style type="text/css">
+	html{
+		height:100%;
+	}
+	body{
+		width:100%;
+		height:auto;
+		background: #3498db; /* Old browsers */
+		background: -moz-radial-gradient(center, ellipse cover,  #3498db 0%, #2980b9 100%); /* FF3.6+ */
+		background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#3498db), color-stop(100%,#2980b9)); /* Chrome,Safari4+ */
+		background: -webkit-radial-gradient(center, ellipse cover,  #3498db 0%,#2980b9 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-radial-gradient(center, ellipse cover,  #3498db 0%,#2980b9 100%); /* Opera 12+ */
+		background: -ms-radial-gradient(center, ellipse cover,  #3498db 0%,#2980b9 100%); /* IE10+ */
+		background: radial-gradient(ellipse at center,  #3498db 0%,#2980b9 100%); /* W3C */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3498db', endColorstr='#2980b9',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+	}
+	ul{
+		list-style:none;
+		width:300px;
+		height:66px;
+		position:absolute;
+		top:50%;
+		left:50%;
+		margin-left:-150px;
+		margin-top:-33px;
+	}
+	ul > li {		
+		color:#fff;
+		font-size:24px;
+		font-family: 'Open Sans', sans-serif;
+	}
+	.button {
+		-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+		-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+		box-shadow:inset 0px 1px 0px 0px #ffffff;
+		background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+		background:-moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+		background:-webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+		background:-o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+		background:-ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+		background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0);
+		background-color:#ffffff;
+		-moz-border-radius:6px;
+		-webkit-border-radius:6px;
+		border-radius:6px;
+		border:1px solid #dcdcdc;
+		display:inline-block;
+		cursor:pointer;
+		color:#666666;
+		font-family:arial;
+		font-size:15px;
+		font-weight:bold;
+		padding:6px 24px;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #ffffff;
+	}
+	.button:hover {
+		background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+		background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+		background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+		background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+		background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+		background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
+		background-color:#f6f6f6;
+	}
+	.button:active {
+		position:relative;
+		top:1px;
+	}
+	</style>
+	
+	<script src="angular.min.js"></script>
+	<script type="text/javascript">
+	angular.module('app', [])
+	.controller('appController', function($scope, $http, $interval){
+
+		var estadoLed;
+		var timer = $interval(function(){
+			$http.get('http://192.168.1.110/').success(function(data){
+				$scope.temp = data.temp;
+				$scope.umid = data.umid;
+				estadoLed = data.led;
+				if(data.led == 1){
+					$scope.ledEstado = "Desligar Led";
+				}else{
+					$scope.ledEstado = "Ligar Led";
+				}
+			});
+		}, 500);
+
+		$scope.led = function(){
+			if(estadoLed == 1){
+				$http.get('http://192.168.1.110/?ledoff');
+				$scope.ledEstado = "Ligar Led";
+			}else{
+				$http.get('http://192.168.1.110/?ledon');
+				$scope.ledEstado = "Desligar Led";
+			}
+		}
+
+	});
+	</script>
+</body>
+</html>
