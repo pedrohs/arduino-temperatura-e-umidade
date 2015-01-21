@@ -42,8 +42,7 @@ void loop()
         {
           client.println("HTTP/1.1 200 OK");
           
-          client.println("Content-Type: text/javascript");
-          client.println("Access-Control-Allow-Origin: *");
+          client.println("Content-Type: application/json");
           client.println();          
          
           int iniciofrente = linha.indexOf("?");
